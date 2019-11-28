@@ -7,14 +7,19 @@ class ShortUrl < ApplicationRecord
 
   validates :full_url, presence: true
   validate :validate_full_url
+  attr_reader :short_code
 
   def short_code
-    short_code = create_short_code(self.id)
-    self.update(short_code: short_code)
-    return short_code
+    return nil if !self.id?
+    return @short_code if @short_code
+    @short_code = create_short_code(self.id)
+    self.update(short_code: @short_code)
+    return @short_code
   end
 
   def update_title!
+    title = open(self.full_url).read.scan(/<title>(.*?)<\/title>/)[0][0]
+    self.update(title: title)
   end
 
   private
@@ -27,17 +32,17 @@ class ShortUrl < ApplicationRecord
     errors.add(:full_url, "is not a valid url")
   end
 
-  def create_short_code(id_num)
+  def create_short_code(id)
     short_code = ''
-    count = id_num
+    id_num = id
 
-    while ((count) >= 62)
+    while ((id_num) >= 62)
       # minus 1 to account for hash starting at 0
-      num = ((count / 62) - 1) % 62
+      num = ((id_num / 62) - 1) % 62
       short_code = CHARACTERS[num].to_s + short_code
-      count = (count/62) - 1
+      id_num = (id_num/62) - 1
     end
-    short_code + CHARACTERS[id_num % 62].to_s
+    short_code + CHARACTERS[id % 62].to_s
   end
 
 end
