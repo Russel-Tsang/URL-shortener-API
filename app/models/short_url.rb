@@ -5,7 +5,7 @@ class ShortUrl < ApplicationRecord
 
   CHARACTERS = [*'0'..'9', *'a'..'z', *'A'..'Z'].freeze
 
-  validates :full_url, presence: true
+  validates :full_url, presence: true, uniqueness: true
   validate :validate_full_url
   attr_reader :short_code
 
