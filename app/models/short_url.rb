@@ -18,11 +18,14 @@ class ShortUrl < ApplicationRecord
   end
 
   def update_title!
-    title = open(self.full_url).read.scan(/<title>(.*?)<\/title>/)[0][0]
-    self.update(title: title)
+    self.update(title: fetch_title())
   end
 
   private
+
+  def fetch_title
+    open(self.full_url).read.scan(/<title>(.*?)<\/title>/)[0][0]
+  end
 
   def validate_full_url
     # if response from full_url is not 200-OK, then add to errors
@@ -36,8 +39,9 @@ class ShortUrl < ApplicationRecord
     short_code = ''
     id_num = id
 
+    # find base62 counterpart of id number
     while ((id_num) >= 62)
-      # minus 1 to account for hash starting at 0
+      # minus 1 to account for array starting at index 0
       num = ((id_num / 62) - 1) % 62
       short_code = CHARACTERS[num].to_s + short_code
       id_num = (id_num/62) - 1
