@@ -6,7 +6,7 @@ RSpec.describe ShortUrlsController, type: :controller do
 
   describe "index" do
 
-    let!(:short_url) { ShortUrl.create(full_url: "https://www.test.rspec") }
+    let!(:short_url) { ShortUrl.create(full_url: "https://www.google.com") }
     let(:public_attributes) do
       {
         "title"       => short_url.title,
@@ -23,7 +23,7 @@ RSpec.describe ShortUrlsController, type: :controller do
 
     it "has a list of the top 100 urls" do
       get :index, format: :json
-
+      debugger
       expect(parsed_response['urls']).to be_include(public_attributes)
     end
 
@@ -32,7 +32,7 @@ RSpec.describe ShortUrlsController, type: :controller do
   describe "create" do
 
     it "creates a short_url" do
-      post :create, params: { full_url: "https://www.test.rspec" }, format: :json
+      post :create, params: { full_url: "https://www.google.com" }, format: :json
       expect(parsed_response['short_code']).to be_a(String)
     end
 
@@ -44,8 +44,7 @@ RSpec.describe ShortUrlsController, type: :controller do
   end
 
   describe "show" do
-
-    let!(:short_url) { ShortUrl.create(full_url: "https://www.test.rspec") }
+    let!(:short_url) { ShortUrl.create(full_url: "https://www.google.com") }
 
     it "redirects to the full_url" do
       get :show, params: { id: short_url.short_code }, format: :json
