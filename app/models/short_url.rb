@@ -35,18 +35,16 @@ class ShortUrl < ApplicationRecord
     errors.add(:full_url, "is not a valid url")
   end
 
-  def create_short_code(id)
+  def create_short_code(id_num)
     short_code = ''
-    id_num = id
 
     # find base62 counterpart of id number
-    while ((id_num) >= 62)
-      # minus 1 to account for array starting at index 0
-      num = ((id_num / 62) - 1) % 62
-      short_code = CHARACTERS[num].to_s + short_code
-      id_num = (id_num/62) - 1
+    while (id_num > 0)
+      new_char = CHARACTERS[id_num % 62]
+      short_code = new_char + short_code
+      id_num /= 62
     end
-    short_code + CHARACTERS[id % 62].to_s
+    short_code
   end
 
 end
