@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ShortUrlsController, type: :controller do
-
+  render_views
   let(:parsed_response) { JSON.parse(response.body) }
 
   describe "index" do
